@@ -11,8 +11,6 @@ pros::Motor diffTop (20, pros::MotorGearset::green);
 
 lemlib::Drivetrain drivetrain(&left, &right, 12.8125, lemlib::Omniwheel::NEW_275, 450, 2);
 
-lemlib::ControllerSettings lateral_controller(10, 0, 3, 3, 1, 100, 3, 500, 20);
-lemlib::ControllerSettings angular_controller(2, 0, 10, 3, 1, 100, 3, 500, 0);
 
 pros::Rotation hori (9);
 pros::Rotation vert (10);
@@ -22,6 +20,9 @@ lemlib::TrackingWheel hori_track(&hori, lemlib::Omniwheel::NEW_2, -1);
 lemlib::TrackingWheel vert_track(&vert, lemlib::Omniwheel::NEW_2, 1.375);
 
 lemlib::OdomSensors sensors(&vert_track, nullptr, &hori_track, nullptr, &imu);
+
+lemlib::ControllerSettings lateral_controller(10, 0, 3, 3, 1, 100, 3, 500, 20);
+lemlib::ControllerSettings angular_controller(2, 0, 10, 3, 1, 100, 3, 500, 0);
 
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 
@@ -55,6 +56,17 @@ void initialize() {
 	lv_image_set_src(logo, &sillysmol);
 	lv_image_set_scale(logo, 40);
 	lv_obj_align(logo, LV_ALIGN_CENTER, 139, -20);
+
+	pros::Task screen_task([&]() {
+        while (true) {
+            // print robot location to the brain screen
+            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+            // delay to save resources
+            pros::delay(20);
+        }
+    });
 }
 
 /**
