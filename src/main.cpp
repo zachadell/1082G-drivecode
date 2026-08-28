@@ -16,11 +16,12 @@ lemlib::ControllerSettings angular_controller(2, 0, 10, 3, 1, 100, 3, 500, 0);
 
 pros::Rotation hori (9);
 pros::Rotation vert (10);
+pros::Imu imu (8);
 
 lemlib::TrackingWheel hori_track(&hori, lemlib::Omniwheel::NEW_2, -1);
 lemlib::TrackingWheel vert_track(&vert, lemlib::Omniwheel::NEW_2, 1.375);
 
-lemlib::OdomSensors sensors(nullptr, nullptr, nullptr, nullptr, nullptr);
+lemlib::OdomSensors sensors(&vert_track, nullptr, &hori_track, nullptr, &imu);
 
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 
