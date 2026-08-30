@@ -2,15 +2,16 @@
 #include "lemlib/api.hpp"
 #include "liblvgl/display/lv_display.h"
 #include "liblvgl/widgets/image/lv_image.h"
+#include "liblvgl/widgets/label/lv_label.h"
 
 pros::MotorGroup left ({-11, -12, -13}, pros::MotorGearset::blue);
 pros::MotorGroup right ({1, 2, 3}, pros::MotorGearset::blue);
 
-pros::Motor diffBottom (10, pros::MotorGearset::green);
-pros::Motor diffTop (20, pros::MotorGearset::green);
+pros::Motor lift (4, pros::MotorGearset::blue);
+pros::Motor wrist (14, pros::MotorGearset::green);
+pros::Motor claw (5, pros::MotorGearset::green);
 
 lemlib::Drivetrain drivetrain(&left, &right, 12.8125, lemlib::Omniwheel::NEW_275, 450, 2);
-
 
 pros::Rotation hori (9);
 pros::Rotation vert (10);
@@ -49,7 +50,9 @@ void initialize() {
 	pros::lcd::clear();
 	pros::lcd::register_btn1_cb(on_center_button);
 
-	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_BRAKE);
+	chassis.calibrate(); 
+    chassis.setPose(63.5, 7.75, 180);
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 
 	LV_IMAGE_DECLARE(sillysmol);
 	lv_obj_t* logo = lv_image_create(lv_screen_active());
@@ -57,13 +60,15 @@ void initialize() {
 	lv_image_set_scale(logo, 40);
 	lv_obj_align(logo, LV_ALIGN_CENTER, 139, -20);
 
-	pros::Task screen_task([&]() {
+	lift.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
+	wrist.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
+
+	lv_obj_t* text = lv_label_create(lv_screen_active());
+	lv_obj_align(text, LV_ALIGN_TOP_LEFT, 30, 30);
+
+	pros::Task screen_task([=]() {
         while (true) {
-            // print robot location to the brain screen
-            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
-            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
-            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
-            // delay to save resources
+            lv_label_set_text(text, std::format("X: {:.2f}\nY: {:.2f}\nTheta: {:.2f}", chassis.getPose().x, chassis.getPose().y, chassis.getPose().theta).c_str());
             pros::delay(20);
         }
     });
@@ -98,7 +103,52 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	wrist.move(127);
+	lift.move(127);
+	pros::delay(300);
+	wrist.brake();
+	lift.brake();
+	chassis.moveToPoint(52, 15, 2000, {.forwards = false});
+	chassis.waitUntilDone();
+	claw.move(-127);
+	pros::delay(300);
+	chassis.moveToPoint(74, 24, 3000);
+	chassis.turnToPoint(74, 6, 1000);
+	pros::delay(100);
+	chassis.moveToPoint(74, 6, 1000);
+	chassis.moveToPoint(74, 10, 1000, {.forwards = false});
+	chassis.moveToPoint(74, 6, 1000);
+	chassis.waitUntilDone();
+	lift.move(127);
+	chassis.moveToPoint(74, 35, 2000, {.forwards = false, .maxSpeed = 75});
+	chassis.waitUntilDone();
+	pros::delay(100);
+	claw.brake();
+	chassis.moveToPoint(74, 41, 3000, {.forwards = false, .maxSpeed = 50});
+	lift.brake();
+	pros::delay(100);
+	claw.move(127);
+	lift.move(-127);
+	pros::delay(750);
+	claw.brake();
+	lift.brake();
+	chassis.moveToPoint(54, 28, 2000, {.forwards = false});
+	chassis.waitUntilDone();
+	lift.move(-127);
+	pros::delay(100);
+	claw.move(-127);
+	lift.brake();
+	pros::delay(300);
+	claw.brake();
+	lift.move(127);
+	chassis.moveToPoint(60, 36, 2000);
+	chassis.waitUntilDone();
+	chassis.moveToPose(54, 42, 45, 1000, {.forwards = false});
+	chassis.waitUntilDone();
+	lift.brake();
+
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -126,5 +176,23 @@ void opcontrol() {
 		left.move(dir - turn);
 		right.move(dir + turn);
 		pros::delay(20);
+
+		// Lift
+		if (master.get_digital(DIGITAL_R1) && !master.get_digital(DIGITAL_R2)) {
+			lift.move(127);
+		} else if (master.get_digital(DIGITAL_R2) && !master.get_digital(DIGITAL_R1)) {
+			lift.move(-127);
+		} else {
+			lift.brake();
+		}
+
+		// wrist
+		if (master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
+			wrist.move(127);
+		} else if (master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
+			wrist.move(-127);
+		} else {
+			wrist.brake();
+		}
 	}
 }
