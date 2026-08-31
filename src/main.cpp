@@ -104,6 +104,8 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
+	pros::Controller master(pros::E_CONTROLLER_MASTER);
+
 	wrist.move(127);
 	lift.move(127);
 	pros::delay(300);
@@ -120,34 +122,32 @@ void autonomous() {
 	chassis.moveToPoint(74, 10, 1000, {.forwards = false});
 	chassis.moveToPoint(74, 6, 1000);
 	chassis.waitUntilDone();
-	lift.move(127);
-	chassis.moveToPoint(74, 35, 2000, {.forwards = false, .maxSpeed = 75});
-	chassis.waitUntilDone();
-	pros::delay(100);
 	claw.brake();
-	chassis.moveToPoint(74, 41, 3000, {.forwards = false, .maxSpeed = 50});
-	lift.brake();
-	pros::delay(100);
+	chassis.moveToPoint(60, 36, 3000, {.forwards = false});
+	chassis.waitUntilDone();
+	lift.move(127);
 	claw.move(127);
-	lift.move(-127);
-	pros::delay(750);
-	claw.brake();
+	pros::delay(500);
 	lift.brake();
-	chassis.moveToPoint(54, 28, 2000, {.forwards = false});
+	chassis.moveToPoint(54, 44, 1000, {.forwards = false, .maxSpeed = 50});
 	chassis.waitUntilDone();
 	lift.move(-127);
-	pros::delay(100);
-	claw.move(-127);
+	pros::delay(500);
 	lift.brake();
-	pros::delay(300);
-	claw.brake();
+	chassis.turnToPoint(72, 72, 1000);
+	chassis.waitUntilDone();
 	lift.move(127);
-	chassis.moveToPoint(60, 36, 2000);
-	chassis.waitUntilDone();
-	chassis.moveToPose(54, 42, 45, 1000, {.forwards = false});
-	chassis.waitUntilDone();
+	pros::delay(1000);
 	lift.brake();
-
+	chassis.moveToPoint(54, 30, 2000, {.forwards = false});
+	chassis.waitUntilDone();
+	claw.brake();
+	claw.move(-127);
+	pros::delay(300);
+	chassis.moveToPoint(60, 48, 2000);
+	chassis.waitUntilDone();
+	claw.brake();
+	master.print(0, 0, "dbg: auto done");
 }
 
 /**
@@ -165,9 +165,10 @@ void autonomous() {
  */
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	bool clawUp = false;
 
 	
-
+	
 	while (true) {	
 
 		// Arcade control scheme
@@ -193,6 +194,18 @@ void opcontrol() {
 			wrist.move(-127);
 		} else {
 			wrist.brake();
+		}
+		
+		//claw
+		if (master.get_digital_new_press(DIGITAL_A)) {
+			claw.brake();
+			if (clawUp) {
+				claw.move(-127);
+				clawUp = false;
+			} else {
+				claw.move(127);
+				clawUp = true;
+			}
 		}
 	}
 }
