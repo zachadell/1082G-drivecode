@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "1082G B1 Drivecode",
+    "project_name": "1082G B1 L",
     "target": "v5",
     "templates": {
       "LemLib": {

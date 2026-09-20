@@ -7,7 +7,7 @@
 pros::MotorGroup left ({-11, -12, -13}, pros::MotorGearset::blue);
 pros::MotorGroup right ({1, 2, 3}, pros::MotorGearset::blue);
 
-pros::Motor lift (4, pros::MotorGearset::blue);
+pros::Motor lift (4, pros::MotorGearset::red);
 pros::Motor wrist (14, pros::MotorGearset::green);
 pros::Motor claw (5, pros::MotorGearset::green);
 
@@ -106,48 +106,115 @@ void competition_initialize() {}
 void autonomous() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-	wrist.move(127);
-	lift.move(127);
-	pros::delay(300);
-	wrist.brake();
-	lift.brake();
-	chassis.moveToPoint(52, 15, 2000, {.forwards = false});
-	chassis.waitUntilDone();
-	claw.move(-127);
-	pros::delay(300);
-	chassis.moveToPoint(74, 24, 3000);
-	chassis.turnToPoint(74, 6, 1000);
-	pros::delay(100);
-	chassis.moveToPoint(74, 6, 1000);
-	chassis.moveToPoint(74, 10, 1000, {.forwards = false});
-	chassis.moveToPoint(74, 6, 1000);
-	chassis.waitUntilDone();
-	claw.brake();
-	chassis.moveToPoint(60, 36, 3000, {.forwards = false});
-	chassis.waitUntilDone();
-	lift.move(127);
-	claw.move(127);
-	pros::delay(500);
-	lift.brake();
-	chassis.moveToPoint(54, 44, 1000, {.forwards = false, .maxSpeed = 50});
-	chassis.waitUntilDone();
-	lift.move(-127);
-	pros::delay(500);
-	lift.brake();
-	chassis.turnToPoint(72, 72, 1000);
-	chassis.waitUntilDone();
-	lift.move(127);
-	pros::delay(1000);
-	lift.brake();
-	chassis.moveToPoint(54, 30, 2000, {.forwards = false});
-	chassis.waitUntilDone();
-	claw.brake();
-	claw.move(-127);
-	pros::delay(300);
-	chassis.moveToPoint(60, 48, 2000);
-	chassis.waitUntilDone();
-	claw.brake();
-	master.print(0, 0, "dbg: auto done");
+	bool isRightAuto = false;
+
+	if (isRightAuto) {
+
+		wrist.move(127); 														// prepare wrist/lift for scoring preload
+		lift.move(127);
+		pros::delay(300);
+		wrist.brake();
+		lift.brake();
+		chassis.moveToPoint(63.5, 12, 2000, {.forwards = false, .maxSpeed = 50}); 				// move away from wall
+		chassis.moveToPoint(50, 24, 2000, {.forwards = false, .maxSpeed = 50}); 				// move to low goal
+		chassis.waitUntilDone();
+		claw.move(-127); 														// score preload
+		pros::delay(300);
+		chassis.moveToPoint(74, 24, 6000, {.maxSpeed = 50});										// move to center
+		chassis.turnToPoint(74, 6, 2000, {.maxSpeed = 50});										// look at toggle
+		chassis.moveToPoint(74, 6, 2000, {.maxSpeed = 50});										// toggle once (opponents color)
+		chassis.moveToPoint(74, 14, 2000, {.forwards = false});					// move back
+		chassis.moveToPoint(74, 6, 2000, {.maxSpeed = 50});										// toggle twice (alliance color, +10 pts)
+		chassis.waitUntilDone();
+		claw.brake();
+		chassis.moveToPoint(59, 33, 6000, {.forwards = false, .maxSpeed = 50});					// move close to pin + cup
+		chassis.waitUntilDone();
+		lift.move(127);															// raise the lift
+		claw.move(127);															// prepare claw for grabbing pin
+		pros::delay(1000);
+		lift.brake();
+		chassis.moveToPoint(54, 42, 2000, {.forwards = false, .maxSpeed = 50});					// move claw over pin + cup
+		chassis.waitUntilDone();
+		lift.move(-127);														// grab pin + cup
+		pros::delay(1000);
+		lift.brake();
+		chassis.turnToPoint(48, 24, 2000, {.forwards = false, .maxSpeed = 50});					// turn to goal
+		chassis.waitUntilDone();
+		lift.move(127);															// raise lift to required height
+		pros::delay(2000);
+		lift.brake();
+		chassis.moveToPoint(48, 24, 4000, {.forwards = false, .maxSpeed = 50});					// move pin + cup over goal
+		chassis.waitUntilDone();
+		pros::delay(500);
+		claw.brake();
+		claw.move(-127);														// score pin + cup (+10 pts)
+	} else {
+		wrist.move(127); 														// prepare wrist/lift for scoring preload
+		pros::delay(300);
+		wrist.brake();
+		chassis.moveToPoint(96, 24, 3000, {.forwards = false, .maxSpeed = 50}); 				// move to low goal
+		chassis.waitUntilDone();
+		pros::delay(300);
+		left.move(-50);
+		right.move(-50);
+		pros::delay(100);
+		left.brake();
+		right.brake();
+		claw.move(-50); 														// score preload
+		pros::delay(300);
+		chassis.moveToPoint(77, 24, 6000, {.maxSpeed = 50});					// move to center
+		chassis.turnToHeading(180, 1000);										// look at toggle
+		chassis.moveToPoint(70, 0, 1000);										// toggle once (opponents color)
+		chassis.moveToPoint(70, 14, 2000, {.forwards = false, .maxSpeed = 50});					// move back
+		chassis.moveToPoint(70, 0, 1000);										// toggle twice (alliance color, +10 pts)
+		chassis.waitUntilDone();
+		claw.brake();
+		chassis.moveToPoint(85, 33, 6000, {.forwards = false, .maxSpeed = 50});					// move close to pin + cup
+		chassis.waitUntilDone();
+		lift.move(127);															// raise the lift
+		claw.move(127);															// prepare claw for grabbing pin
+		pros::delay(1300);
+		lift.brake();
+		chassis.moveToPoint(92, 40, 3000, {.forwards = false, .maxSpeed = 50});					// move claw over pin + cup
+		chassis.waitUntilDone();
+		lift.move(-127);														// grab pin + cup
+		pros::delay(1000);
+		lift.brake();
+		chassis.turnToPoint(96, 24, 2000, {.forwards = false, .maxSpeed = 50});					// turn to goal
+		chassis.waitUntilDone();
+		lift.move(127);															// raise lift to required height
+		pros::delay(2000);
+		lift.brake();
+		chassis.moveToPoint(96, 24, 2000, {.forwards = false, .maxSpeed = 50});					// move pin + cup over goal
+		chassis.waitUntilDone();
+		pros::delay(500);
+		claw.brake();
+		claw.move(-127);														// score pin + cup (+10 pts)
+		pros::delay(300);
+		chassis.moveToPoint(84, 48, 2000, {.maxSpeed = 50});										// move away from goal
+		chassis.waitUntilDone();
+		claw.brake();
+		claw.move(127);															// prepare claw for grabbing pin + cup
+		chassis.turnToPoint(120, 24, 3000, {.forwards = false, .maxSpeed = 50});				// turn towards goal
+		chassis.moveToPoint(117, 26, 3000, {.forwards = false, .maxSpeed = 50});				// move claw over pin + cup
+		chassis.waitUntilDone();
+		pros::delay(200);
+		chassis.waitUntilDone();
+		lift.move(-127);														// grab pin + cup
+		pros::delay(1750);
+		lift.brake();
+		chassis.turnToPoint(96, 24, 2000, {.forwards = false, .maxSpeed = 50});	// turn to goal
+		chassis.waitUntilDone();
+		lift.move(127);															// raise lift
+		pros::delay(2500);
+		chassis.moveToPoint(96, 24, 2500, {.forwards = false, .maxSpeed = 50});	// move claw over goal
+		chassis.waitUntilDone();
+		lift.brake();
+		claw.move(-127);														// score pin + cup (+10 pts)
+		chassis.moveToPoint(117, 26, 2000, {.maxSpeed = 50});					// move away from goal
+		chassis.turnToPoint(72, 72, 3000, {.maxSpeed = 50});					// turn to mid
+		chassis.moveToPoint(72, 72, 2000, {.maxSpeed = 50});					// move to mid
+	}
 }
 
 /**
@@ -166,8 +233,9 @@ void autonomous() {
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	bool clawUp = false;
-
-	
+	claw.move(-127);
+	master.clear();
+	master.print(0, 0, "Claw: OUT");
 	
 	while (true) {	
 
@@ -198,13 +266,16 @@ void opcontrol() {
 		
 		//claw
 		if (master.get_digital_new_press(DIGITAL_A)) {
+			master.clear();
 			claw.brake();
 			if (clawUp) {
 				claw.move(-127);
 				clawUp = false;
+				master.print(0, 0, "Claw: OUT");
 			} else {
 				claw.move(127);
 				clawUp = true;
+				master.print(0, 0, "Claw: IN");
 			}
 		}
 	}
