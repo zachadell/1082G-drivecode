@@ -1,6 +1,6 @@
 # 1082G VEX Robotics Drive Code
 
-![VEX Robotics](https://img.shields.io/badge/VEX%20Robotics-1082G-blue)
+![VEX Robotics](https://img.shields.io/badge/Lovejoy%20Robotics-1082G-blue)
 ![PROS](https://img.shields.io/badge/PROS-V5-red)
 ![LemLib](https://img.shields.io/badge/LemLib-Odometry%20%26%20PID-orange)
 ![C++](https://img.shields.io/badge/C%2B%2B-17-blue)
