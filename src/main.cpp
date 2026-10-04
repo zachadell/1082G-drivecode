@@ -3,29 +3,9 @@
 #include "liblvgl/display/lv_display.h"
 #include "liblvgl/widgets/image/lv_image.h"
 #include "liblvgl/widgets/label/lv_label.h"
+#include "botconfig.h"
+#include "auton.h"
 
-pros::MotorGroup left ({-11, -12, -13}, pros::MotorGearset::blue);
-pros::MotorGroup right ({1, 2, 3}, pros::MotorGearset::blue);
-
-pros::Motor lift (4, pros::MotorGearset::red);
-pros::Motor wrist (14, pros::MotorGearset::green);
-pros::Motor claw (5, pros::MotorGearset::green);
-
-lemlib::Drivetrain drivetrain(&left, &right, 12.8125, lemlib::Omniwheel::NEW_275, 450, 2);
-
-pros::Rotation hori (9);
-pros::Rotation vert (10);
-pros::Imu imu (8);
-
-lemlib::TrackingWheel hori_track(&hori, lemlib::Omniwheel::NEW_2, -1);
-lemlib::TrackingWheel vert_track(&vert, lemlib::Omniwheel::NEW_2, 1.375);
-
-lemlib::OdomSensors sensors(&vert_track, nullptr, &hori_track, nullptr, &imu);
-
-lemlib::ControllerSettings lateral_controller(10, 0, 3, 3, 1, 100, 3, 500, 20);
-lemlib::ControllerSettings angular_controller(2, 0, 10, 3, 1, 100, 3, 500, 0);
-
-lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
 
 void on_center_button() {
 	static bool pressed = false;
@@ -103,12 +83,10 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void runAuton();
 
 void autonomous() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	
-	runAuton();
+	runRightAuton();
+	//runLeftAuton();
 }
 
 /**
@@ -126,10 +104,10 @@ void autonomous() {
  */
 void opcontrol() {
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	bool clawUp = false;
-	claw.move(-127);
+	bool clawOpen = false;
 	master.clear();
-	master.print(0, 0, "Claw: OUT");
+	master.print(0,0, "Claw: %s", clawOpen ? "Open" : "Closed");
+
 	
 	while (true) {	
 
@@ -160,17 +138,10 @@ void opcontrol() {
 		
 		//claw
 		if (master.get_digital_new_press(DIGITAL_A)) {
+			clawOpen ^= 1; //toggles using xor
+			claw.set_value(clawOpen);
 			master.clear();
-			claw.brake();
-			if (clawUp) {
-				claw.move(-127);
-				clawUp = false;
-				master.print(0, 0, "Claw: OUT");
-			} else {
-				claw.move(127);
-				clawUp = true;
-				master.print(0, 0, "Claw: IN");
-			}
+			master.print(0,0, "Claw: %s", clawOpen ? "Open" : "Closed");
 		}
 	}
 }
