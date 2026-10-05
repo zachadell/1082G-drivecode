@@ -2,11 +2,10 @@
 #include "main.h"
 #include "lemlib/api.hpp"
 
-pros::MotorGroup left ({-11, -12, -13}, pros::MotorGearset::blue);
-pros::MotorGroup right ({1, 2, 3}, pros::MotorGearset::blue);
+pros::MotorGroup left ({-20, -10}, pros::MotorGearset::blue);
+pros::MotorGroup right ({11, 1}, pros::MotorGearset::blue);
 
-pros::Motor lift (4, pros::MotorGearset::red);
-pros::Motor wrist (14, pros::MotorGearset::green);
+pros::MotorGroup lift ({-9, 4}, pros::MotorGearset::green);
 
 pros::ADIAnalogOut claw('A');
 

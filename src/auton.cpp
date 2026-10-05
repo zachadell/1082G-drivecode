@@ -4,10 +4,8 @@
 #include "auton.h"
 
 void runRightAuton() {
-    wrist.move(127); 														// prepare wrist/lift for scoring preload
-	lift.move(127);
+    lift.move(127);
 	pros::delay(300);
-	wrist.brake();
 	lift.brake();
 	chassis.moveToPoint(63.5, 12, 2000, {.forwards = false, .maxSpeed = 50}); 				// move away from wall
 	chassis.moveToPoint(50, 24, 2000, {.forwards = false, .maxSpeed = 50}); 				// move to low goal
@@ -39,9 +37,7 @@ void runRightAuton() {
 	pros::delay(500);							// move to mid
 }
 void runLeftAuton() {
-	wrist.move(127); 														// prepare wrist/lift for scoring preload
 	pros::delay(300);
-	wrist.brake();
 	chassis.moveToPoint(96, 24, 3000, {.forwards = false, .maxSpeed = 50}); 				// move to low goal
 	chassis.waitUntilDone();
 	pros::delay(300);

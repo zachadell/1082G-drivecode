@@ -41,7 +41,6 @@ void initialize() {
 	lv_obj_align(logo, LV_ALIGN_CENTER, 139, -20);
 
 	lift.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
-	wrist.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
 
 	lv_obj_t* text = lv_label_create(lv_screen_active());
 	lv_obj_align(text, LV_ALIGN_TOP_LEFT, 30, 30);
@@ -122,18 +121,9 @@ void opcontrol() {
 		if (master.get_digital(DIGITAL_R1) && !master.get_digital(DIGITAL_R2)) {
 			lift.move(127);
 		} else if (master.get_digital(DIGITAL_R2) && !master.get_digital(DIGITAL_R1)) {
-			lift.move(-127);
+			lift.move(-70);
 		} else {
 			lift.brake();
-		}
-
-		// wrist
-		if (master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
-			wrist.move(127);
-		} else if (master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
-			wrist.move(-127);
-		} else {
-			wrist.brake();
 		}
 		
 		//claw
