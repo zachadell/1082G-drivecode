@@ -28,4 +28,6 @@ extern lemlib::ControllerSettings angular_controller;
 
 extern lemlib::Chassis chassis;
 
+extern lemlib::PID liftPID;
+
 #endif

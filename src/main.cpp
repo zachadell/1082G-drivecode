@@ -5,18 +5,12 @@
 #include "liblvgl/widgets/label/lv_label.h"
 #include "botconfig.h"
 #include "auton.h"
+#include "lift.h"
 
 
 void on_center_button() {
 	static bool pressed = false;
 	pressed = !pressed;
-
-	LV_IMAGE_DECLARE(shayaan);
-	lv_obj_t* img = lv_image_create(lv_screen_active());
-	lv_image_set_src(img, &shayaan);
-	lv_image_set_scale(img, 270);
-	lv_obj_align(img, LV_ALIGN_CENTER, 0, -20);
-	
 }
 
 /**
@@ -33,12 +27,6 @@ void initialize() {
 	chassis.calibrate(); 
     chassis.setPose(63.5, 7.75, 180);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
-
-	LV_IMAGE_DECLARE(sillysmol);
-	lv_obj_t* logo = lv_image_create(lv_screen_active());
-	lv_image_set_src(logo, &sillysmol);
-	lv_image_set_scale(logo, 40);
-	lv_obj_align(logo, LV_ALIGN_CENTER, 139, -20);
 
 	lift.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
 
@@ -84,8 +72,10 @@ void competition_initialize() {}
  */
 
 void autonomous() {
-	runRightAuton();
-	//runLeftAuton();
+	liftReset();
+	waitForLift();
+	liftToHeight(10);
+	waitForLift();
 }
 
 /**
@@ -109,7 +99,6 @@ void opcontrol() {
 
 	
 	while (true) {	
-
 		// Arcade control scheme
 		int dir = master.get_analog(ANALOG_LEFT_Y);
 		int turn = -master.get_analog(ANALOG_RIGHT_X);
@@ -118,20 +107,19 @@ void opcontrol() {
 		pros::delay(20);
 
 		// Lift
-		if (master.get_digital(DIGITAL_R1) && !master.get_digital(DIGITAL_R2)) {
-			lift.move(127);
-		} else if (master.get_digital(DIGITAL_R2) && !master.get_digital(DIGITAL_R1)) {
+		if (master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
+			lift.move(80);
+		} else if (master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
 			lift.move(-70);
 		} else {
 			lift.brake();
 		}
 		
 		//claw
-		if (master.get_digital_new_press(DIGITAL_A)) {
-			clawOpen ^= 1; //toggles using xor
-			claw.set_value(clawOpen);
-			master.clear();
-			master.print(0,0, "Claw: %s", clawOpen ? "Open" : "Closed");
+		if (master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
+			claw.set_value(true);
+		} else if (master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
+			claw.set_value(false);
 		}
 	}
 }

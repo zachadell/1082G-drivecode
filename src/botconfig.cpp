@@ -5,7 +5,7 @@
 pros::MotorGroup left ({-20, -10}, pros::MotorGearset::blue);
 pros::MotorGroup right ({11, 1}, pros::MotorGearset::blue);
 
-pros::MotorGroup lift ({-9, 4}, pros::MotorGearset::green);
+pros::MotorGroup lift ({9, -4}, pros::MotorGearset::green);
 
 pros::ADIAnalogOut claw('A');
 
@@ -24,3 +24,5 @@ lemlib::ControllerSettings lateral_controller(10, 0, 3, 3, 1, 100, 3, 500, 20);
 lemlib::ControllerSettings angular_controller(2, 0, 10, 3, 1, 100, 3, 500, 0);
 
 lemlib::Chassis chassis(drivetrain, lateral_controller, angular_controller, sensors);
+
+lemlib::PID liftPID(10, 0, 3, 2, false);
