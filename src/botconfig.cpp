@@ -5,9 +5,11 @@
 pros::MotorGroup left ({-20, -10}, pros::MotorGearset::blue);
 pros::MotorGroup right ({11, 1}, pros::MotorGearset::blue);
 
-pros::MotorGroup lift ({9, -4}, pros::MotorGearset::green);
+pros::MotorGroup lift ({9, -5}, pros::MotorGearset::green);
+pros::Motor lift1(9, pros::MotorGearset::green);
+pros::Motor lift2(-5, pros::MotorGearset::green);
 
-pros::ADIAnalogOut claw('A');
+pros::ADIDigitalOut claw('A');
 
 lemlib::Drivetrain drivetrain(&left, &right, 12.8125, lemlib::Omniwheel::NEW_275, 450, 2);
 

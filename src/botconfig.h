@@ -10,7 +10,11 @@ extern pros::MotorGroup left;
 extern pros::MotorGroup right;
 
 extern pros::MotorGroup lift;
-extern pros::ADIAnalogOut claw;
+extern pros::Motor lift1;
+extern pros::Motor lift2;
+
+
+extern pros::ADIDigitalOut claw;
 
 extern lemlib::Drivetrain drivetrain;
 
