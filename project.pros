@@ -1,7 +1,7 @@
 {
   "py/object": "pros.conductor.project.Project",
   "py/state": {
-    "project_name": "1082G B1 L",
+    "project_name": "1082G SKILLS",
     "target": "v5",
     "templates": {
       "LemLib": {
@@ -635,9 +635,9 @@
       }
     },
     "upload_options": {
-      "slot": 1,
+      "description": "sped",
       "icon": "pizza",
-      "description": "yoooooooo"
+      "slot": 3
     },
     "use_early_access": false
   }

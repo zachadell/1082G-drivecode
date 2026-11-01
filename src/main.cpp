@@ -4,8 +4,6 @@
 #include "liblvgl/widgets/image/lv_image.h"
 #include "liblvgl/widgets/label/lv_label.h"
 #include "botconfig.h"
-#include "auton.h"
-#include "lift.h"
 
 
 void on_center_button() {
@@ -25,12 +23,13 @@ void initialize() {
 	pros::lcd::register_btn1_cb(on_center_button);
 
 	chassis.calibrate(); 
-    chassis.setPose(63.5, 7.75, 180);
+    chassis.setPose(0.0, -63, 0);
     chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
 
 	lift.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
 	lift1.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
 	lift2.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
+	toggle.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
 
 	lv_obj_t* text = lv_label_create(lv_screen_active());
 	lv_obj_align(text, LV_ALIGN_TOP_LEFT, 30, 30);
@@ -74,10 +73,7 @@ void competition_initialize() {}
  */
 
 void autonomous() {
-	liftReset();
-	waitForLift();
-	liftToHeight(10);
-	waitForLift();
+	runSkills();
 }
 
 /**
@@ -94,26 +90,44 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
 	bool clawOpen = false;
 	bool buttonPressing = false;
 	master.clear();
 	master.print(0,0, "Claw: %s", clawOpen ? "Open" : "Closed");
 
+
+
+	// SKILLS ONLY -----------------------------------------------------------------------------
+	toggle.move_relative(360 * 5, 1000);
+	pros::delay(500);
+	lift.move(127);
+	pros::delay(200);
+	lift.brake();
+	chassis.moveToPoint(24, -48, 1000, {}, false);
+	lift.move(-127);
+	pros::delay(200);
+	lift.brake();
+	claw.set_value(true);
+	/*
+	*/
+	// SKILLS ONLY -----------------------------------------------------------------------------
 	
+	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
+
+
 	while (true) {	
 		// Arcade control scheme
-		int dir = -master.get_analog(ANALOG_LEFT_Y);
-		int turn = -master.get_analog(ANALOG_RIGHT_X);
-		left.move(dir - turn);
-		right.move(dir + turn);
+		int dir = master.get_analog(ANALOG_LEFT_Y);
+		int turn = master.get_analog(ANALOG_RIGHT_X) / 1.5;
+		left.move(dir + turn);
+		right.move(dir - turn);
 		pros::delay(20);
 
 		// Lift
 		if (master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
-			lift.move(70);
-		} else if (master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
 			lift.move(-100);
+		} else if (master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
+			lift.move(127);
 		} else {
 			lift.brake();
 		}
@@ -126,12 +140,13 @@ void opcontrol() {
 		} else if (!master.get_digital(DIGITAL_R2) && buttonPressing) {
 			buttonPressing = false;
 		}
-		/*
-		if (master.get_digital(DIGITAL_R1) && !master.get_digital(DIGITAL_R2)) {
-			claw.set_value(true);
-		} else if (master.get_digital(DIGITAL_R2) && !master.get_digital(DIGITAL_R1)) {
-			claw.set_value(false);
+		
+
+		if (master.get_digital(DIGITAL_R1)) {
+			toggle.move(127);
+		} else {
+			toggle.brake();
 		}
-		*/
+		
 	}
 }

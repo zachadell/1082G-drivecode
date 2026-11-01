@@ -3,7 +3,8 @@
 #ifndef AUTON
 #define AUTON
 
-extern void runRightAuton();
-extern void runLeftAuton();
+extern void runRight();
+extern void runLeft();
+extern void runSkills();
 
 #endif

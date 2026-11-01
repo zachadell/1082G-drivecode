@@ -2,9 +2,14 @@
 
 #include "main.h"
 #include "lemlib/api.hpp"
+#include "auton.h"
+#include "lift.h"
+
 
 #ifndef BOTCONFIG
 #define BOTCONFIG
+
+extern pros::Controller master;
 
 extern pros::MotorGroup left;
 extern pros::MotorGroup right;
@@ -13,8 +18,10 @@ extern pros::MotorGroup lift;
 extern pros::Motor lift1;
 extern pros::Motor lift2;
 
+extern pros::Motor toggle;
 
 extern pros::ADIDigitalOut claw;
+extern pros::Optical clawOptical;
 
 extern lemlib::Drivetrain drivetrain;
 

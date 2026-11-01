@@ -2,94 +2,105 @@
 #include "liblvgl/widgets/image/lv_image.h"
 #include "liblvgl/widgets/label/lv_label.h"
 #include "auton.h"
+#include "botconfig.h"
+#include <vector>
 
-void runRightAuton() {
-    lift.move(127);
-	pros::delay(300);
-	lift.brake();
-	chassis.moveToPoint(63.5, 12, 2000, {.forwards = false, .maxSpeed = 50}); 				// move away from wall
-	chassis.moveToPoint(50, 24, 2000, {.forwards = false, .maxSpeed = 50}); 				// move to low goal
-	chassis.waitUntilDone();														// score preload
-	pros::delay(300);
-	chassis.moveToPoint(74, 24, 6000, {.maxSpeed = 50});										// move to center
-	chassis.turnToPoint(74, 6, 2000, {.maxSpeed = 50});										// look at toggle
-	chassis.moveToPoint(74, 6, 2000, {.maxSpeed = 50});										// toggle once (opponents color)
-	chassis.moveToPoint(74, 14, 2000, {.forwards = false});					// move back
-	chassis.moveToPoint(74, 6, 2000, {.maxSpeed = 50});										// toggle twice (alliance color, +10 pts)
-	chassis.waitUntilDone();
-	chassis.moveToPoint(59, 33, 6000, {.forwards = false, .maxSpeed = 50});					// move close to pin + cup
-	chassis.waitUntilDone();
-	lift.move(127);															// prepare claw for grabbing pin
-	pros::delay(1000);
-	lift.brake();
-	chassis.moveToPoint(54, 42, 2000, {.forwards = false, .maxSpeed = 50});					// move claw over pin + cup
-	chassis.waitUntilDone();
-	lift.move(-127);														// grab pin + cup
-	pros::delay(1000);
-	lift.brake();
-	chassis.turnToPoint(48, 24, 2000, {.forwards = false, .maxSpeed = 50});					// turn to goal
-	chassis.waitUntilDone();
-	lift.move(127);															// raise lift to required height
-	pros::delay(2000);
-	lift.brake();
-	chassis.moveToPoint(48, 24, 4000, {.forwards = false, .maxSpeed = 50});					// move pin + cup over goal
-	chassis.waitUntilDone();
-	pros::delay(500);							// move to mid
+ASSET(Skills1f_TXT);
+
+struct Segment {
+	std::string name;
+	float lookahead;
+	int timeout;
+	bool forwards;
+};
+
+
+
+void runRight() {
+    return;
 }
+
 void runLeftAuton() {
-	pros::delay(300);
-	chassis.moveToPoint(96, 24, 3000, {.forwards = false, .maxSpeed = 50}); 				// move to low goal
-	chassis.waitUntilDone();
-	pros::delay(300);
-	left.move(-50);
-	right.move(-50);
+	return;
+}
+
+void runSkills() {
 	pros::delay(100);
-	left.brake();
-	right.brake(); 														// score preload
-	pros::delay(300);
-	chassis.moveToPoint(77, 24, 6000, {.maxSpeed = 50});					// move to center
-	chassis.turnToHeading(180, 1000);										// look at toggle
-	chassis.moveToPoint(70, 0, 1000);										// toggle once (opponents color)
-	chassis.moveToPoint(70, 14, 2000, {.forwards = false, .maxSpeed = 50});					// move back
-	chassis.moveToPoint(70, 0, 1000);										// toggle twice (alliance color, +10 pts)
-	chassis.waitUntilDone();
-	chassis.moveToPoint(85, 33, 6000, {.forwards = false, .maxSpeed = 50});					// move close to pin + cup
-	chassis.waitUntilDone();
-	lift.move(127);															// prepare claw for grabbing pin
-	pros::delay(1300);
-	lift.brake();
-	chassis.moveToPoint(92, 40, 3000, {.forwards = false, .maxSpeed = 50});					// move claw over pin + cup
-	chassis.waitUntilDone();
-	lift.move(-127);														// grab pin + cup
-	pros::delay(1000);
-	lift.brake();
-	chassis.turnToPoint(96, 24, 2000, {.forwards = false, .maxSpeed = 50});					// turn to goal
-	chassis.waitUntilDone();
-	lift.move(127);															// raise lift to required height
-	pros::delay(2000);
-	lift.brake();
-	chassis.moveToPoint(96, 24, 2000, {.forwards = false, .maxSpeed = 50});					// move pin + cup over goal
-	chassis.waitUntilDone();
-	pros::delay(500);														// score pin + cup (+10 pts)
-	pros::delay(300);
-	chassis.moveToPoint(84, 48, 2000, {.maxSpeed = 50});										// move away from goal
-	chassis.waitUntilDone();														// prepare claw for grabbing pin + cup
-	chassis.turnToPoint(120, 24, 3000, {.forwards = false, .maxSpeed = 50});				// turn towards goal
-	chassis.moveToPoint(117, 26, 3000, {.forwards = false, .maxSpeed = 50});				// move claw over pin + cup
-	chassis.waitUntilDone();
+	// ------ init -------
+
+
+	
+	toggle.move_relative(360 * 5, 1000);
+	pros::delay(500);
+	lift.move(127);
 	pros::delay(200);
-	chassis.waitUntilDone();
-	lift.move(-127);														// grab pin + cup
-	pros::delay(1750);
 	lift.brake();
-	chassis.turnToPoint(96, 24, 2000, {.forwards = false, .maxSpeed = 50});	// turn to goal
-	chassis.waitUntilDone();
-	lift.move(127);															// raise lift
-	pros::delay(2500);
-	chassis.moveToPoint(96, 24, 2500, {.forwards = false, .maxSpeed = 50});	// move claw over goal
-	chassis.waitUntilDone();
-	lift.brake();														// score pin + cup (+10 pts)
-	chassis.moveToPoint(117, 26, 2000, {.maxSpeed = 50});					// move away from goal
-	chassis.turnToPoint(72, 72, 3000, {.maxSpeed = 50});					// turn to mid
-	chassis.moveToPoint(72, 72, 2000, {.maxSpeed = 50});
+	chassis.moveToPoint(24, -48, 1000, {}, false);
+	lift.move(-127);
+	pros::delay(200);
+	lift.brake();
+	claw.set_value(true);
+
+	pros::delay(200);
+
+	chassis.moveToPoint(0, -40, 2000, {.forwards = false}, false);
+	lift.move(-127);
+	pros::delay(250);
+	lift.brake();
+	chassis.turnToPoint(24, -24, 1000, {}, false);
+	pros::delay(100);
+	chassis.moveToPoint(27, -21, 3000, {.maxSpeed = 30, .minSpeed = 15}, false);
+	claw.set_value(false);
+	pros::delay(100);
+	lift.move(127);
+	pros::delay(400);
+	lift.brake();
+	chassis.moveToPoint(24, -48, 1500, {}, false);
+	lift.move(-100);
+	pros::delay(300);
+	lift.brake();
+	claw.set_value(true);
+	
+	pros::delay(200);
+	
+	chassis.moveToPoint(24, -24, 2000, {.forwards = false}, false);
+	lift.move(-127);
+	pros::delay(300);
+	lift.brake();
+	chassis.turnToPoint(48, -48, 1000, {}, false);
+	chassis.moveToPoint(51, -45, 3000, {.maxSpeed = 30, .minSpeed = 15}, false);
+	claw.set_value(false);
+	lift.move(127);
+	pros::delay(500);
+	lift.brake();
+	chassis.moveToPoint(24, -48, 2000, {}, false);
+	lift.move(-127);
+	pros::delay(100);
+	lift.brake();
+	claw.set_value(true);
+	/*
+	
+	pros::delay(200);
+	
+	chassis.moveToPoint(60, -45, 2000, {.forwards = false}, false);
+	chassis.turnToHeading(180, 1000, {}, false);
+	claw.set_value(false);
+	chassis.moveToPoint(60, -66, 2000, {}, false);
+	lift.move(75);
+	pros::delay(100);
+	lift.brake();
+	chassis.moveToPoint(60, -45, 2000, {.forwards = false}, false);
+	chassis.turnToPoint(24, -48, 2000, {}, false);
+	lift.move(127);
+	pros::delay(600);
+	lift.brake();
+	chassis.moveToPoint(24, -48, 2000, {}, false);
+	pros::delay(200);
+	lift.move(-127);
+	pros::delay(250);
+	lift.brake();
+	claw.set_value(true);
+	*/
+
+	
 }
