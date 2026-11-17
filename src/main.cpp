@@ -73,7 +73,7 @@ void competition_initialize() {}
  */
 
 void autonomous() {
-	runSkills();
+	runLeft();
 }
 
 /**
@@ -98,6 +98,7 @@ void opcontrol() {
 
 
 	// SKILLS ONLY -----------------------------------------------------------------------------
+	/*
 	toggle.move_relative(360 * 5, 1000);
 	pros::delay(500);
 	lift.move(127);
@@ -108,7 +109,6 @@ void opcontrol() {
 	pros::delay(200);
 	lift.brake();
 	claw.set_value(true);
-	/*
 	*/
 	// SKILLS ONLY -----------------------------------------------------------------------------
 	
@@ -144,7 +144,9 @@ void opcontrol() {
 
 		if (master.get_digital(DIGITAL_R1)) {
 			toggle.move(127);
-		} else {
+		} else if (master.get_digital(DIGITAL_Y)) {
+			toggle.move(-127);
+	 	} else {
 			toggle.brake();
 		}
 		

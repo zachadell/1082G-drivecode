@@ -17,11 +17,49 @@ struct Segment {
 
 
 void runRight() {
-    return;
+    toggle.move_relative(300 * 5, 1000);
+	pros::delay(500);
+	chassis.moveToPoint(0, -30, 500, {.maxSpeed = 70});
 }
 
-void runLeftAuton() {
-	return;
+void runLeft() {
+	toggle.move_relative(300 * 5, 1000);
+	pros::delay(500);
+	chassis.moveToPoint(24, -48, 2000, {.maxSpeed = 70});
+	lift.move(127);
+	pros::delay(225);
+	lift.brake();
+	chassis.waitUntilDone();
+	/*
+	lift.move(-127);
+	pros::delay(400);
+	lift.brake();
+	*/
+	claw.set_value(true);
+	chassis.moveToPoint(0, -48, 3000, {.forwards = false, .maxSpeed = 50}, false);
+
+	pros::delay(200);
+
+
+	/*
+	chassis.moveToPoint(0, -40, 2000, {.forwards = false}, false);
+	lift.move(-127);
+	pros::delay(250);
+	lift.brake();
+	chassis.turnToPoint(24, -24, 1000, {}, false);
+	pros::delay(100);
+	chassis.moveToPoint(27, -21, 3000, {.maxSpeed = 30, .minSpeed = 15}, false);
+	claw.set_value(false);
+	pros::delay(100);
+	lift.move(127);
+	pros::delay(400);
+	lift.brake();
+	chassis.moveToPoint(24, -48, 1500, {}, false);
+	lift.move(-100);
+	pros::delay(300);
+	lift.brake();
+	claw.set_value(true);
+	*/
 }
 
 void runSkills() {
