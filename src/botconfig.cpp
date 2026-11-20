@@ -4,17 +4,14 @@
 
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 
-pros::MotorGroup left ({-11, -1}, pros::MotorGearset::blue);
-pros::MotorGroup right ({20, 10}, pros::MotorGearset::blue);
+pros::MotorGroup left ({-10, -9}, pros::MotorGearset::blue);
+pros::MotorGroup right ({1, 2}, pros::MotorGearset::blue);
 
-pros::MotorGroup lift ({-9, 5}, pros::MotorGearset::green);
-pros::Motor lift1(-9, pros::MotorGearset::red);
-pros::Motor lift2(5, pros::MotorGearset::red);
+pros::MotorGroup lift ({20, -19, -13}, pros::MotorGearset::blue);
 
-pros::Motor toggle(15, pros::MotorGearset::green);
+pros::Motor toggle(4, pros::MotorGearset::green);
 
-pros::ADIDigitalOut claw('A');
-pros::Optical clawOptical(2);
+pros::Motor claw(7, pros::MotorGearset::green);
 
 lemlib::Drivetrain drivetrain(&left, &right, 12.8125, lemlib::Omniwheel::NEW_275, 450, 2);
 

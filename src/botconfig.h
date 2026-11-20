@@ -14,13 +14,14 @@ extern pros::Controller master;
 extern pros::MotorGroup left;
 extern pros::MotorGroup right;
 
-extern pros::MotorGroup lift;
 extern pros::Motor lift1;
 extern pros::Motor lift2;
+extern pros::Motor lift3;
+extern pros::MotorGroup lift;
 
 extern pros::Motor toggle;
 
-extern pros::ADIDigitalOut claw;
+extern pros::Motor claw;
 extern pros::Optical clawOptical;
 
 extern lemlib::Drivetrain drivetrain;

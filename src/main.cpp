@@ -24,12 +24,9 @@ void initialize() {
 
 	chassis.calibrate(); 
     chassis.setPose(0.0, -63, 0);
-    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_HOLD);
+    chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
-	lift.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
-	lift1.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
-	lift2.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
-	toggle.set_brake_mode(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
+	toggle.set_brake_mode_all(pros::motor_brake_mode_e::E_MOTOR_BRAKE_HOLD);
 
 	lv_obj_t* text = lv_label_create(lv_screen_active());
 	lv_obj_align(text, LV_ALIGN_TOP_LEFT, 30, 30);
@@ -90,7 +87,7 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	bool clawOpen = false;
+	bool clawOpen = 127;
 	bool buttonPressing = false;
 	master.clear();
 	master.print(0,0, "Claw: %s", clawOpen ? "Open" : "Closed");
@@ -114,7 +111,7 @@ void opcontrol() {
 	
 	chassis.setBrakeMode(pros::E_MOTOR_BRAKE_COAST);
 
-
+	claw.move(clawOpen);
 	while (true) {	
 		// Arcade control scheme
 		int dir = master.get_analog(ANALOG_LEFT_Y);
@@ -125,7 +122,7 @@ void opcontrol() {
 
 		// Lift
 		if (master.get_digital(DIGITAL_L2) && !master.get_digital(DIGITAL_L1)) {
-			lift.move(-100);
+			lift.move(-127);
 		} else if (master.get_digital(DIGITAL_L1) && !master.get_digital(DIGITAL_L2)) {
 			lift.move(127);
 		} else {
@@ -135,8 +132,8 @@ void opcontrol() {
 		//claw
 		if (master.get_digital(DIGITAL_R2) && !buttonPressing) {
 			buttonPressing = true;
-			claw.set_value(!clawOpen);
-			clawOpen = !clawOpen;
+			clawOpen = -clawOpen;
+			claw.move(clawOpen);
 		} else if (!master.get_digital(DIGITAL_R2) && buttonPressing) {
 			buttonPressing = false;
 		}
